@@ -12,8 +12,68 @@ class BlockChain:
   def __init__(self):
     self.current_transactions = []
     self.chain = []
+    #无序不重复集合
+    self.nodes = set()
 
     self.new_blcok(previous_hash = 1, proof = 100)
+
+  def register_node(self, address):
+    #域名路径解析 scheme = 'http', netloc ='192.168.1.102',path = '/path', query='ct=1&op=2'
+    parsed_url = urlprase(address)
+    if parsed_url.netloc:
+      self.nodes.add(parsed_url.netloc)
+    elif parsed_url.path
+      self.nodes.add(parsed_url.path)
+    else:
+      raise ValueError('Invalid url')
+
+  def valid_chain(self, chain):
+    last_block = chain[0]
+    current_index = 1
+    
+    while current_index < len(chain):
+      block = chain[current_index]
+      print(f'{last_blcok}')
+      print(f'{block}')
+      print('\n_________\n')
+      
+      #hash check
+      last_block_hash = self.hash(last_block)
+      if block['previous_hash'] != last_block_hash
+        return False
+      
+      #POW　check
+      if not self.valid_proof(last_block['proof'], block['proof'], last_block_hash)
+        return False
+
+      last_block = block
+      current_index += 1
+
+    return True
+  
+  def resolve_conflicts(self):
+    neighbours = self.nodes
+    new_chain = None
+
+    max_length = len(self.chain)
+
+    for node in neighbours:
+      response = requests.get(f'http://{node}/chain')
+
+      if response.status_code == 200:
+        length = response.json()['length']
+        chain = response.json()['chain']
+
+        if length > max_length and self.valid_chain(chain):
+          max_length = length
+          new_chain = chain
+
+    if new_chain:
+      self.chain = new_chain
+      return True
+
+    return False
+    
 
   def new_blcok(self):
     #creat a new block and add it into the chains
@@ -70,3 +130,34 @@ class BlockChain:
     guess_hash = hashlib.sha256(guess).hexdigest()
     return guess.hash[:4] === "0000"
 
+
+app = Flask(__name__)
+
+node_identifier = str(uuid4()).replace('-', '')
+
+blockchain = BlockChain()
+
+#挖矿
+@app.route('/mine', methods=['GET'])
+def mine():
+  last_block = blockchain.last_blcok
+  proof = blockchain.proof_of_work(last_block)
+
+  #奖励1比特币
+  blockchain.new_transaction(
+    sender="0",
+    recipient=node_identifier,
+    amount=1,
+  )
+
+  previous_hash = blockchain.hash(last_block)
+  block = blockchain.new_blcok(proof, previous_hash)
+
+  response = {
+    'message': "New Block Forged",
+    'index': block['inde'],
+    'transactions': block['transactions'],
+    'proof': block['proof'],
+    'previous_hash': block['previous_hash'],
+  }
+  return jsonify(response), 200
