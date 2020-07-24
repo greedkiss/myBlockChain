@@ -14,6 +14,6 @@ block = {
     'previous_hash': "2cf24dba5fb0a30e26e83b2ac5b9e29e1b161e5c1fa7425e73043362938b9824"
 }
 ```
-> 有三个重要的数据结构,chain, node, transaction; 安全保证: previous_hash, pow
-> 挖矿主要是pow做一个算力值预测
+> 有三个重要的数据结构,chain, node, transaction; 安全保证: previous_hash, pow  
+> 挖矿主要是pow做一个算力值预测  
 > p2p模式，假设每个主机运行该工程，block_chain最长且符合pow和prevoius_hash等检测的同步block_chain
