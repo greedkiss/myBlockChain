@@ -15,5 +15,5 @@ block = {
 }
 ```
 > 有三个重要的数据结构,chain, node, transaction; 安全保证: previous_hash, pow  
-> 挖矿主要是pow做一个算力值预测,且sha256不可逆　　
+> 挖矿主要是pow做一个算力值预测,且sha256不可逆  
 > p2p模式，假设每个主机运行该工程，block_chain最长且符合pow和prevoius_hash等检测的同步block_chain
